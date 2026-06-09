@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CUBA.life — Directory for All 15 Provinces</title>
+  <title>CUBA Libre — Directory for All 15 Provinces</title>
+  <meta name="description" content="The free, open-source community platform for Cuba — directory, news, events, and the Libre exchange network connecting Cubans island-wide and worldwide.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#002A8F">
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,26 +19,22 @@
   <div class="top-bar">
     <div class="logo">
       <span class="logo-star">★</span>
-      <span class="logo-text">cuba<span class="logo-dot">.life</span></span>
+      <span class="logo-text">cuba<span class="logo-dot"> libre</span></span>
     </div>
-
     <button class="province-btn">
       <span>🇨🇺</span> Havana <span class="arrow">▾</span>
     </button>
-
     <div class="top-search">
       <span class="top-search-icon">🔍</span>
       <input type="text" placeholder="Search name, phone, business...">
     </div>
-
     <div class="top-right">
-      <button class="lang-btn">ES</button>
-      <button class="support-top-btn">❤ Support CUBA</button>
+      <button class="lang-btn" title="Idioma / Language">ES</button>
+      <button class="libre-balance-btn">⚡ 0 Libre</button>
+      <button class="support-top-btn">❤ Solidarity</button>
       <button class="login-btn">Login</button>
-      <button class="chat-btn">💬</button>
     </div>
   </div>
-
   <nav class="main-nav">
     <a href="#" class="nav-item active">🏠 Home</a>
     <a href="#" class="nav-item">📋 Directory</a>
@@ -48,19 +47,27 @@
     <a href="#" class="nav-item">🌍 Translate</a>
     <a href="#" class="nav-item">✈️ Diaspora</a>
     <a href="#" class="nav-item">🚗 Ride</a>
-    <a href="#" class="nav-item">🏪 Archive</a>
-    <a href="#support" class="nav-item support-nav">❤ Patreon</a>
+    <a href="#libre" class="nav-item libre-nav">⚡ Libre</a>
+    <a href="#solidarity" class="nav-item solidarity-nav">❤ Solidarity</a>
   </nav>
 </header>
 
 <!-- ===== HERO ===== -->
 <section class="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-flag-bg">
+    <div class="flag-stripe blue"></div>
+    <div class="flag-stripe white"></div>
+    <div class="flag-stripe blue"></div>
+    <div class="flag-stripe white"></div>
+    <div class="flag-stripe blue"></div>
+    <div class="flag-triangle">
+      <div class="flag-star">★</div>
+    </div>
+  </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1 class="hero-title">Find anyone, any business,<br>anywhere in Cuba</h1>
-    <p class="hero-sub">The complete directory connecting Cuba's people, culture &amp; commerce — island to diaspora</p>
-
+    <p class="hero-sub">The free, open-source platform connecting Cuba's people, culture &amp; commerce — island to diaspora</p>
     <div class="search-widget">
       <div class="search-input-wrap">
         <span class="search-icon">🔍</span>
@@ -69,7 +76,6 @@
       </div>
       <button class="find-btn">Find →</button>
     </div>
-
     <div class="category-pills">
       <button class="pill">👤 People</button>
       <button class="pill">🏢 Business</button>
@@ -82,25 +88,15 @@
 
 <!-- ===== STATS BAR ===== -->
 <div class="stats-bar">
-  <div class="stat-item">
-    <span class="stat-num">15</span>
-    <span class="stat-label">Provinces</span>
-  </div>
+  <div class="stat-item"><span class="stat-num">15</span><span class="stat-label">Provinces</span></div>
   <div class="stat-divider"></div>
-  <div class="stat-item">
-    <span class="stat-num">12K+</span>
-    <span class="stat-label">Listings</span>
-  </div>
+  <div class="stat-item"><span class="stat-num">12K+</span><span class="stat-label">Listings</span></div>
   <div class="stat-divider"></div>
-  <div class="stat-item">
-    <span class="stat-num">24</span>
-    <span class="stat-label">News Sources</span>
-  </div>
+  <div class="stat-item"><span class="stat-num">24</span><span class="stat-label">News Sources</span></div>
   <div class="stat-divider"></div>
-  <div class="stat-item">
-    <span class="stat-num">340+</span>
-    <span class="stat-label">Supporters</span>
-  </div>
+  <div class="stat-item"><span class="stat-num">340+</span><span class="stat-label">Supporters</span></div>
+  <div class="stat-divider"></div>
+  <div class="stat-item"><span class="stat-num libre-count">0</span><span class="stat-label">Libre in Circulation</span></div>
 </div>
 
 <!-- ===== FEATURES ===== -->
@@ -108,42 +104,78 @@
   <div class="container">
     <h2 class="section-title">Everything Cuba in One Place</h2>
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">📋</div>
-        <h3>Directory</h3>
-        <p>Find people, businesses, and government offices across all 15 provinces</p>
-        <a href="#" class="card-link">Browse →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📰</div>
-        <h3>News</h3>
-        <p>Aggregated headlines from Cuban publications and diaspora media</p>
-        <a href="#" class="card-link">Read →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📌</div>
-        <h3>Classifieds</h3>
-        <p>Buy, sell, and trade — within Cuba and with the global diaspora</p>
-        <a href="#" class="card-link">Explore →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎉</div>
-        <h3>Events</h3>
-        <p>Cultural events, concerts, and festivals across the island and beyond</p>
-        <a href="#" class="card-link">View →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📻</div>
-        <h3>Radio</h3>
-        <p>Stream live Cuban radio stations from every province, anywhere in the world</p>
-        <a href="#" class="card-link">Listen →</a>
-      </div>
+      <div class="feature-card"><div class="feature-icon">📋</div><h3>Directory</h3><p>Find people, businesses, and government offices across all 15 provinces</p><a href="#" class="card-link">Browse →</a></div>
+      <div class="feature-card"><div class="feature-icon">📰</div><h3>News</h3><p>Aggregated headlines from Cuban publications and diaspora media worldwide</p><a href="#" class="card-link">Read →</a></div>
+      <div class="feature-card"><div class="feature-icon">📌</div><h3>Classifieds</h3><p>Buy, sell, and trade using Libre — no bank, no Visa, no Mastercard needed</p><a href="#" class="card-link">Explore →</a></div>
+      <div class="feature-card"><div class="feature-icon">🎉</div><h3>Events</h3><p>Cultural events, concerts, and festivals across the island and beyond</p><a href="#" class="card-link">View →</a></div>
+      <div class="feature-card"><div class="feature-icon">📻</div><h3>Radio</h3><p>Stream live Cuban radio from every province, anywhere in the world</p><a href="#" class="card-link">Listen →</a></div>
       <div class="feature-card highlight-card">
-        <div class="feature-icon">❤</div>
-        <h3>Support CUBA</h3>
-        <p>Join our Patreon and help keep this platform free, independent, and growing</p>
-        <a href="#support" class="card-link support-link">Become a Patron →</a>
+        <div class="feature-icon">⚡</div>
+        <h3>Libre Exchange</h3>
+        <p>Cuba's own community currency — earn it, spend it, send it. No bank required.</p>
+        <a href="#libre" class="card-link libre-link">Get Libre →</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LIBRE CURRENCY ===== -->
+<section class="section libre-section" id="libre">
+  <div class="container">
+    <div class="libre-header">
+      <div class="libre-symbol">⚡</div>
+      <h2>Libre — Cuba's Community Currency</h2>
+      <p>No bank account needed. No Visa. No Mastercard. Just a free account on Cuba Libre and you're in the economy. Libre is the platform's internal exchange unit — earn it by being active, spend it on services and goods, or receive solidarity gifts from friends of Cuba worldwide.</p>
+    </div>
+
+    <div class="libre-grid">
+      <div class="libre-card">
+        <div class="libre-card-icon">🌱</div>
+        <h3>Earn Libre</h3>
+        <ul class="libre-list">
+          <li><span class="libre-amount">+100</span> Sign up &amp; verify your account</li>
+          <li><span class="libre-amount">+10</span> Every day you're active</li>
+          <li><span class="libre-amount">+50</span> Add or verify a business listing</li>
+          <li><span class="libre-amount">+25</span> Write a review</li>
+          <li><span class="libre-amount">+100</span> Translate content (per string)</li>
+          <li><span class="libre-amount">+200</span> Report a bug that gets fixed</li>
+          <li><span class="libre-amount">+500</span> Refer a friend who joins</li>
+          <li><span class="libre-amount">+1000</span> Contribute code on GitHub</li>
+        </ul>
+      </div>
+
+      <div class="libre-card">
+        <div class="libre-card-icon">🛒</div>
+        <h3>Spend Libre</h3>
+        <ul class="libre-list">
+          <li><span class="libre-amount spend">500</span> List your business</li>
+          <li><span class="libre-amount spend">2000</span> Featured listing / month</li>
+          <li><span class="libre-amount spend">100</span> Post a classified ad</li>
+          <li><span class="libre-amount spend">500</span> Promote an event</li>
+          <li><span class="libre-amount spend">any</span> Pay for services P2P</li>
+          <li><span class="libre-amount spend">any</span> Buy goods in the Market</li>
+          <li><span class="libre-amount spend">any</span> Book rides &amp; deliveries</li>
+          <li><span class="libre-amount spend">free</span> Send to any Cuban user</li>
+        </ul>
+      </div>
+
+      <div class="libre-card libre-card-highlight">
+        <div class="libre-card-icon">❤</div>
+        <h3>Receive Solidarity</h3>
+        <p class="libre-sub">Friends of Cuba around the world can convert USD, EUR or any currency into Libre and send directly to you, your family, or your business. No financial system involvement.</p>
+        <div class="solidarity-flow">
+          <div class="flow-step">💳 Supporter pays online</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">⚡ Converts to Libre</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">🇨🇺 Arrives in Cuba</div>
+        </div>
+        <a href="#solidarity" class="libre-cta">Send Solidarity Libre →</a>
+      </div>
+    </div>
+
+    <div class="libre-note">
+      <strong>⚡ How it works:</strong> Libre is not a cryptocurrency — no blockchain, no speculation, no volatility. It's a simple community credit stored securely in our database, backed by real community activity and solidarity. 1 Libre ≈ $0.10 USD in platform value. It cannot be cashed out to fiat, which means it operates completely outside the financial restrictions facing Cuba.
     </div>
   </div>
 </section>
@@ -167,41 +199,15 @@
         <h3>Cuba's vibrant music scene continues to inspire the world — new generation of artists blending tradition with bold innovation</h3>
         <p class="news-meta">Granma · Havana · Today</p>
       </div>
-      <div class="news-card">
-        <div class="news-tag">Havana</div>
-        <h3>Local entrepreneurs in Habana Vieja find new ways to connect with diaspora buyers online</h3>
-        <p class="news-meta">14ymedio · 08/06/2026</p>
-      </div>
-      <div class="news-card">
-        <div class="news-tag">Diaspora</div>
-        <h3>Cuban community in Miami launches support fund for families back home</h3>
-        <p class="news-meta">CiberCuba · 08/06/2026</p>
-      </div>
-      <div class="news-card">
-        <div class="news-tag">Economy</div>
-        <h3>New cooperative models emerge in Santiago de Cuba as grassroots community organises</h3>
-        <p class="news-meta">El Toque · 08/06/2026</p>
-      </div>
-      <div class="news-card">
-        <div class="news-tag">Culture</div>
-        <h3>Havana Jazz Festival announces 2026 lineup featuring international and local acts</h3>
-        <p class="news-meta">Havana Times · 07/06/2026</p>
-      </div>
-      <div class="news-card">
-        <div class="news-tag">Community</div>
-        <h3>Grassroots tech community builds connectivity solutions for rural Cuban provinces</h3>
-        <p class="news-meta">OnCuba News · 07/06/2026</p>
-      </div>
+      <div class="news-card"><div class="news-tag">Havana</div><h3>Local entrepreneurs in Habana Vieja find new ways to connect with diaspora buyers online</h3><p class="news-meta">14ymedio · 08/06/2026</p></div>
+      <div class="news-card"><div class="news-tag">Diaspora</div><h3>Cuban community in Miami launches support fund for families back home</h3><p class="news-meta">CiberCuba · 08/06/2026</p></div>
+      <div class="news-card"><div class="news-tag">Economy</div><h3>New cooperative models emerge in Santiago de Cuba as grassroots community organises</h3><p class="news-meta">El Toque · 08/06/2026</p></div>
+      <div class="news-card"><div class="news-tag">Culture</div><h3>Havana Jazz Festival announces 2026 lineup featuring international and local acts</h3><p class="news-meta">Havana Times · 07/06/2026</p></div>
+      <div class="news-card"><div class="news-tag">Community</div><h3>Grassroots tech community builds connectivity solutions for rural Cuban provinces</h3><p class="news-meta">OnCuba News · 07/06/2026</p></div>
     </div>
     <div class="news-sources">
       <span class="sources-label">Sources:</span>
-      <span class="source-tag">Granma</span>
-      <span class="source-tag">14ymedio</span>
-      <span class="source-tag">CiberCuba</span>
-      <span class="source-tag">Havana Times</span>
-      <span class="source-tag">El Toque</span>
-      <span class="source-tag">OnCuba News</span>
-      <span class="source-tag">+ 18 more</span>
+      <span class="source-tag">Granma</span><span class="source-tag">14ymedio</span><span class="source-tag">CiberCuba</span><span class="source-tag">Havana Times</span><span class="source-tag">El Toque</span><span class="source-tag">OnCuba News</span><span class="source-tag">+ 18 more</span>
     </div>
   </div>
 </section>
@@ -211,133 +217,125 @@
   <div class="container">
     <h2 class="section-title">Explore by Province</h2>
     <div class="provinces-grid">
-      <div class="province-card active-province">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Havana</span>
-        <span class="prov-count">4.2K listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Santiago de Cuba</span>
-        <span class="prov-count">1.8K listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Camagüey</span>
-        <span class="prov-count">1.2K listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Holguín</span>
-        <span class="prov-count">980 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Villa Clara</span>
-        <span class="prov-count">750 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Matanzas</span>
-        <span class="prov-count">690 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Granma</span>
-        <span class="prov-count">540 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Las Tunas</span>
-        <span class="prov-count">430 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Cienfuegos</span>
-        <span class="prov-count">380 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Pinar del Río</span>
-        <span class="prov-count">350 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Sancti Spíritus</span>
-        <span class="prov-count">310 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Guantánamo</span>
-        <span class="prov-count">270 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Artemisa</span>
-        <span class="prov-count">220 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Mayabeque</span>
-        <span class="prov-count">190 listings</span>
-      </div>
-      <div class="province-card">
-        <span class="prov-flag">🇨🇺</span>
-        <span class="prov-name">Isla de la Juventud</span>
-        <span class="prov-count">85 listings</span>
-      </div>
+      <div class="province-card active-province"><span class="prov-flag">🇨🇺</span><span class="prov-name">Havana</span><span class="prov-count">4.2K listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Santiago de Cuba</span><span class="prov-count">1.8K listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Camagüey</span><span class="prov-count">1.2K listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Holguín</span><span class="prov-count">980 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Villa Clara</span><span class="prov-count">750 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Matanzas</span><span class="prov-count">690 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Granma</span><span class="prov-count">540 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Las Tunas</span><span class="prov-count">430 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Cienfuegos</span><span class="prov-count">380 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Pinar del Río</span><span class="prov-count">350 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Sancti Spíritus</span><span class="prov-count">310 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Guantánamo</span><span class="prov-count">270 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Artemisa</span><span class="prov-count">220 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Mayabeque</span><span class="prov-count">190 listings</span></div>
+      <div class="province-card"><span class="prov-flag">🇨🇺</span><span class="prov-name">Isla de la Juventud</span><span class="prov-count">85 listings</span></div>
     </div>
   </div>
 </section>
 
-<!-- ===== SUPPORT / PATREON ===== -->
-<section class="section support-section" id="support">
+<!-- ===== SOLIDARITY ===== -->
+<section class="section solidarity-section" id="solidarity">
   <div class="container">
-    <div class="support-header">
-      <div class="support-icon">❤</div>
-      <h2>Support CUBA at Heart</h2>
-      <p>This platform is built and maintained by Cubans and friends of Cuba. Your support keeps it free, independent, and growing for the entire Cuban community worldwide.</p>
+    <div class="solidarity-header">
+      <div class="solidarity-icon">🌎</div>
+      <h2>Cuba at Heart — Global Solidarity Network</h2>
+      <p>From Miami to Madrid, from Dakar to Stockholm — if you love Cuba and want to help its people thrive, this is your channel. Send Libre directly to Cuban users, sponsor a business, or fund a community need. 100% goes to the people.</p>
     </div>
-    <div class="tiers-grid">
-      <div class="tier-card">
-        <div class="tier-badge">🌟</div>
-        <h3 class="tier-name">Amigo</h3>
-        <div class="tier-price">$3<span>/mo</span></div>
-        <ul class="tier-perks">
-          <li>✓ Support the platform</li>
-          <li>✓ Monthly newsletter</li>
-          <li>✓ Your name in credits</li>
-        </ul>
-        <a href="#" class="tier-btn">Join as Amigo</a>
+
+    <div class="solidarity-options">
+      <div class="solidarity-card">
+        <div class="s-icon">👤</div>
+        <h3>Support a Person</h3>
+        <p>Send Libre directly to a specific Cuban user — a friend, family member, or someone you found in the directory.</p>
+        <button class="s-btn">Find &amp; Send →</button>
       </div>
-      <div class="tier-card featured-tier">
-        <div class="tier-popular">Most Popular</div>
-        <div class="tier-badge">⭐</div>
-        <h3 class="tier-name">Compañero</h3>
-        <div class="tier-price">$10<span>/mo</span></div>
-        <ul class="tier-perks">
-          <li>✓ All Amigo perks</li>
-          <li>✓ Early access to features</li>
-          <li>✓ Free business listing</li>
-          <li>✓ Community Discord access</li>
-        </ul>
-        <a href="#" class="tier-btn tier-btn-primary">Join as Compañero</a>
+      <div class="solidarity-card">
+        <div class="s-icon">🏢</div>
+        <h3>Support a Business</h3>
+        <p>Give a local Cuban business a boost — pre-pay for services, buy gift vouchers in Libre, or sponsor their listing.</p>
+        <button class="s-btn">Browse Businesses →</button>
       </div>
-      <div class="tier-card">
-        <div class="tier-badge">💫</div>
-        <h3 class="tier-name">Patrocinador</h3>
-        <div class="tier-price">$25<span>/mo</span></div>
-        <ul class="tier-perks">
-          <li>✓ All Compañero perks</li>
-          <li>✓ Featured directory listing</li>
-          <li>✓ Sponsor badge on profile</li>
-          <li>✓ Direct line to the team</li>
-          <li>✓ Monthly community call</li>
-        </ul>
-        <a href="#" class="tier-btn">Join as Patrocinador</a>
+      <div class="solidarity-card">
+        <div class="s-icon">🏘</div>
+        <h3>Support a Province</h3>
+        <p>Donate to a province-wide pool. Distributed to verified users in that province by community vote.</p>
+        <button class="s-btn">Choose Province →</button>
+      </div>
+      <div class="solidarity-card featured-solidarity">
+        <div class="s-icon">🌊</div>
+        <h3>Emergency Pool</h3>
+        <p>When there's a crisis — blackout, storm, shortage — the emergency pool activates and distributes instantly to those most affected.</p>
+        <button class="s-btn s-btn-primary">Contribute Now →</button>
       </div>
     </div>
-    <p class="support-note">340 supporters already helping CUBA thrive · <a href="#">See all supporters</a></p>
+
+    <div class="solidarity-tiers">
+      <h3 class="tiers-subtitle">Monthly Supporters</h3>
+      <div class="tiers-grid">
+        <div class="tier-card">
+          <div class="tier-badge">🌟</div>
+          <h3 class="tier-name">Amigo</h3>
+          <div class="tier-price">$3<span>/mo</span></div>
+          <ul class="tier-perks">
+            <li>✓ 300 Libre/month gifted to Cuba pool</li>
+            <li>✓ Monthly newsletter</li>
+            <li>✓ Name in supporters wall</li>
+          </ul>
+          <a href="#" class="tier-btn">Join as Amigo</a>
+        </div>
+        <div class="tier-card featured-tier">
+          <div class="tier-popular">Most Popular</div>
+          <div class="tier-badge">⭐</div>
+          <h3 class="tier-name">Compañero</h3>
+          <div class="tier-price">$10<span>/mo</span></div>
+          <ul class="tier-perks">
+            <li>✓ 1,200 Libre/month to gift freely</li>
+            <li>✓ Early access to features</li>
+            <li>✓ Free business listing</li>
+            <li>✓ Community Discord access</li>
+          </ul>
+          <a href="#" class="tier-btn tier-btn-primary">Join as Compañero</a>
+        </div>
+        <div class="tier-card">
+          <div class="tier-badge">💫</div>
+          <h3 class="tier-name">Patrocinador</h3>
+          <div class="tier-price">$25<span>/mo</span></div>
+          <ul class="tier-perks">
+            <li>✓ 3,500 Libre/month to direct</li>
+            <li>✓ Sponsor a province directly</li>
+            <li>✓ Patron badge everywhere</li>
+            <li>✓ Monthly community call</li>
+            <li>✓ Direct line to the team</li>
+          </ul>
+          <a href="#" class="tier-btn">Join as Patrocinador</a>
+        </div>
+      </div>
+      <p class="support-note">340 people already helping Cuba thrive · <a href="#">See all supporters</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OPEN SOURCE ===== -->
+<section class="section opensource-section">
+  <div class="container opensource-grid">
+    <div class="os-text">
+      <h2>Free. Open Source. For the People.</h2>
+      <p>Cuba Libre is MIT-licensed and fully open source. Anyone can run it, fork it, or adapt it for their community. Every improvement made by anyone in the world makes Cuba's version better too.</p>
+      <div class="os-links">
+        <a href="https://github.com/Luvlab/cuba-libre" class="os-btn" target="_blank">⭐ Star on GitHub</a>
+        <a href="https://github.com/Luvlab/cuba-libre/issues" class="os-btn os-btn-outline" target="_blank">🐛 Report an Issue</a>
+        <a href="https://github.com/Luvlab/cuba-libre/discussions" class="os-btn os-btn-outline" target="_blank">💬 Discuss</a>
+      </div>
+    </div>
+    <div class="os-stats">
+      <div class="os-stat"><span class="os-num">MIT</span><span class="os-label">License</span></div>
+      <div class="os-stat"><span class="os-num">PWA</span><span class="os-label">Works Offline</span></div>
+      <div class="os-stat"><span class="os-num">ES</span><span class="os-label">Spanish First</span></div>
+      <div class="os-stat"><span class="os-num">0</span><span class="os-label">Tracking</span></div>
+    </div>
   </div>
 </section>
 
@@ -346,13 +344,10 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="footer-logo">★ cuba<span>.life</span></div>
-        <p>The complete directory and community platform for Cuba — connecting people, businesses, and culture across the island and the diaspora worldwide.</p>
+        <div class="footer-logo">★ cuba<span> libre</span></div>
+        <p>The free, open-source community platform for Cuba — connecting people, businesses, and culture across the island and the diaspora worldwide.</p>
         <div class="footer-social">
-          <a href="#">𝕏</a>
-          <a href="#">f</a>
-          <a href="#">in</a>
-          <a href="#">ig</a>
+          <a href="#">𝕏</a><a href="#">f</a><a href="#">in</a><a href="#">ig</a>
         </div>
       </div>
       <div class="footer-col">
@@ -370,10 +365,10 @@
         <h4>Community</h4>
         <ul>
           <li><a href="#">Diaspora</a></li>
-          <li><a href="#support">Support CUBA</a></li>
-          <li><a href="#">Advertise</a></li>
+          <li><a href="#libre">Libre Currency</a></li>
+          <li><a href="#solidarity">Solidarity</a></li>
           <li><a href="#">Add Listing</a></li>
-          <li><a href="#">Contribute</a></li>
+          <li><a href="https://github.com/Luvlab/cuba-libre">Open Source</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -388,11 +383,9 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 CUBA.life · News articles remain the intellectual property of their respective publishers.</p>
+      <p>© 2026 Cuba Libre · Open Source · MIT License · News remains property of respective publishers.</p>
       <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Contact</a>
+        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
       </div>
     </div>
   </div>

@@ -1,0 +1,17 @@
+{
+  "name": "Cuba Libre",
+  "short_name": "CubaLibre",
+  "description": "The free, open-source community platform for Cuba",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#001A5C",
+  "theme_color": "#002A8F",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "categories": ["social", "utilities", "lifestyle"],
+  "lang": "es",
+  "dir": "ltr"
+}
