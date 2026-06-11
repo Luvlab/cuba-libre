@@ -1,0 +1,863 @@
+// Cuba Libre — Prisma Schema
+// Maps to Supabase PostgreSQL (all DB columns are lowercase due to unquoted CREATE TABLE)
+// MIT License — open-source for the Cuban people
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  USER
+  BUSINESS_OWNER
+  SALES_REP
+  AMBASSADOR
+  ADMIN
+}
+
+enum ListingType {
+  PERSONAL
+  BUSINESS
+  GOVERNMENT
+  NGO
+}
+
+enum ListingTier {
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  FEATURED
+  CANCELLED
+}
+
+enum AdTier {
+  BANNER
+  SPONSORED
+  FEATURED
+  PREMIUM
+}
+
+enum LibreTxType {
+  EARN_SIGNUP
+  EARN_DAILY
+  EARN_LISTING
+  EARN_REVIEW
+  EARN_TRANSLATE
+  EARN_BUG
+  EARN_REFERRAL
+  EARN_CODE
+  EARN_SOLIDARITY
+  SPEND_CLASSIFIED
+  SPEND_BOOKING
+  SPEND_MARKET
+  SPEND_RIDE
+  SPEND_BOOST
+  TRANSFER
+}
+
+enum SolidarityTarget {
+  USER
+  BUSINESS
+  PROVINCE
+  EMERGENCY_POOL
+}
+
+enum SolidarityStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+// ─── User ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(uuid())
+  email        String?   @unique
+  phone        String?   @unique
+  name         String
+  role         Role      @default(USER)
+  language     String    @default("es")
+  province     String?
+  passwordhash String?   @map("passwordhash")
+  googleid     String?   @unique @map("googleid")
+  avatarurl    String?   @map("avatarurl")
+  createdat    DateTime  @default(now()) @map("createdat")
+  updatedat    DateTime  @updatedAt @map("updatedat")
+
+  listings               Listing[]              @relation("UserListings")
+  salesRep               SalesRep?
+  ambassador             Ambassador?
+  reviews                Review[]
+  bookings               Booking[]
+  classifieds            Classified[]
+  translationSuggestions TranslationSuggestion[]
+  translationVotes       TranslationVote[]
+  eventsSubmitted        Event[]
+  eventAttendances       EventAttendee[]
+  following              Follow[]               @relation("UserFollows")
+  wallet                 LibreWallet?
+  rideRequests           RideRequest[]
+  microLoans             MicroLoan[]
+  driverProfile          DriverProfile?
+  ads                    Ad[]
+  sentMessages           DirectMessage[]
+
+  @@map("User")
+}
+
+// ─── Ambassador ───────────────────────────────────────────────────────────────
+
+model Ambassador {
+  id                String    @id @default(uuid())
+  userid            String    @unique @map("userid")
+  province          String?
+  city              String?
+  listingkickback   Float     @default(2.00) @map("listingkickback")
+  prokickbackrate   Float     @default(0.15) @map("prokickbackrate")
+  totalearned       Float     @default(0)    @map("totalearned")
+  pendingpayout     Float     @default(0)    @map("pendingpayout")
+  active            Boolean   @default(true)
+  createdat         DateTime  @default(now()) @map("createdat")
+
+  user              User      @relation(fields: [userid], references: [id])
+  listingsEntered   Listing[] @relation("AmbassadorListings")
+  proSales          ProSubscription[]
+  payouts           AmbassadorPayout[]
+
+  @@map("Ambassador")
+}
+
+// ─── SalesRep ─────────────────────────────────────────────────────────────────
+
+model SalesRep {
+  id             String   @id @default(uuid())
+  userid         String   @unique @map("userid")
+  territory      String?
+  province       String?
+  commissionrate Float    @default(0.2) @map("commissionrate")
+  totalearned    Float    @default(0)   @map("totalearned")
+  active         Boolean  @default(true)
+  createdat      DateTime @default(now()) @map("createdat")
+
+  user       User         @relation(fields: [userid], references: [id])
+  ads        Ad[]
+  commissions Commission[]
+  feedback   SalesFeedback[]
+
+  @@map("SalesRep")
+}
+
+// ─── Listing ──────────────────────────────────────────────────────────────────
+
+model Listing {
+  id           String      @id @default(uuid())
+  type         ListingType
+  name         String
+  phone        String?
+  phone2       String?
+  email        String?
+  address      String?
+  city         String?
+  province     String
+  zipcode      String?     @map("zipcode")
+  latitude     Float?
+  longitude    Float?
+  category     String?
+  subcategory  String?
+  description  String?
+  website      String?
+  whatsapp     String?
+  verified     Boolean     @default(false)
+  active       Boolean     @default(true)
+  viewcount    Int         @default(0)    @map("viewcount")
+  language     String      @default("es")
+  osmid        String?     @unique @map("osmid")
+  ispro        Boolean     @default(false) @map("ispro")
+  logourl      String?     @map("logourl")
+  photos       String[]
+  openinghours String?     @map("openinghours")
+  avgrating    Float       @default(0)    @map("avgrating")
+  reviewcount  Int         @default(0)    @map("reviewcount")
+  bookable     Boolean     @default(false)
+  tier         ListingTier @default(SILVER)
+  submittedbyid String?    @map("submittedbyid")
+  enteredbyid   String?    @map("enteredbyid")
+  createdat    DateTime    @default(now()) @map("createdat")
+  updatedat    DateTime    @updatedAt      @map("updatedat")
+
+  submittedBy      User?              @relation("UserListings",     fields: [submittedbyid], references: [id])
+  enteredBy        Ambassador?        @relation("AmbassadorListings", fields: [enteredbyid],   references: [id])
+  tags             Tag[]
+  reviews          Review[]
+  bookings         Booking[]
+  ads              Ad[]
+  proSubscription  ProSubscription?
+  certification    CubaCertification?
+  awards           CubaAward[]
+  marketProducts   MarketProduct[]
+  events           Event[]
+  promotions       BusinessPromotion[]
+  salesFeedback    SalesFeedback[]
+
+  @@map("Listing")
+}
+
+// ─── Tag ──────────────────────────────────────────────────────────────────────
+
+model Tag {
+  id        String   @id @default(uuid())
+  listingid String   @map("listingid")
+  name      String
+  createdat DateTime @default(now()) @map("createdat")
+
+  listing Listing @relation(fields: [listingid], references: [id], onDelete: Cascade)
+
+  @@map("Tag")
+}
+
+// ─── Review ───────────────────────────────────────────────────────────────────
+
+model Review {
+  id           String   @id @default(uuid())
+  listingid    String   @map("listingid")
+  userid       String   @map("userid")
+  rating       Int
+  comment      String?
+  helpfulcount Int      @default(0) @map("helpfulcount")
+  ownerreply   String?  @map("ownerreply")
+  createdat    DateTime @default(now()) @map("createdat")
+
+  listing Listing @relation(fields: [listingid], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userid],    references: [id], onDelete: Cascade)
+
+  @@map("Review")
+}
+
+// ─── Booking ──────────────────────────────────────────────────────────────────
+
+model Booking {
+  id           String        @id @default(uuid())
+  listingid    String        @map("listingid")
+  userid       String        @map("userid")
+  service      String?
+  date         DateTime?
+  duration     Int?
+  notes        String?
+  status       BookingStatus @default(PENDING)
+  totalprice   Float?        @map("totalprice")
+  currency     String        @default("LIBRE")
+  guestcount   Int           @default(1) @map("guestcount")
+  contactname  String?       @map("contactname")
+  contactphone String?       @map("contactphone")
+  createdat    DateTime      @default(now()) @map("createdat")
+
+  listing Listing @relation(fields: [listingid], references: [id])
+  user    User    @relation(fields: [userid],    references: [id])
+
+  @@map("Booking")
+}
+
+// ─── News ─────────────────────────────────────────────────────────────────────
+
+model NewsArchive {
+  id          String    @id @default(uuid())
+  title       String
+  link        String    @unique
+  summary     String?
+  image       String?
+  source      String?
+  province    String?
+  category    String?
+  publishedat DateTime? @map("publishedat")
+  archivedat  DateTime  @default(now()) @map("archivedat")
+  lang        String    @default("es")
+
+  @@map("NewsArchive")
+}
+
+// ─── Event ────────────────────────────────────────────────────────────────────
+
+model Event {
+  id            String      @id @default(uuid())
+  title         String
+  description   String?
+  startdate     DateTime    @map("startdate")
+  enddate       DateTime?   @map("enddate")
+  venue         String?
+  city          String?
+  province      String?
+  latitude      Float?
+  longitude     Float?
+  category      String?
+  imageurl      String?     @map("imageurl")
+  ticketurl     String?     @map("ticketurl")
+  price         Float?
+  currency      String      @default("LIBRE")
+  isfree        Boolean     @default(true) @map("isfree")
+  listingid     String?     @map("listingid")
+  submittedbyid String?     @map("submittedbyid")
+  featuredbyid  String?     @map("featuredbyid")
+  status        EventStatus @default(PENDING)
+  views         Int         @default(0)
+  createdat     DateTime    @default(now()) @map("createdat")
+  updatedat     DateTime    @updatedAt      @map("updatedat")
+
+  listing     Listing?       @relation(fields: [listingid],     references: [id])
+  submittedBy User?          @relation(fields: [submittedbyid], references: [id])
+  attendees   EventAttendee[]
+
+  @@map("Event")
+}
+
+model EventAttendee {
+  id       String @id @default(uuid())
+  eventid  String @map("eventid")
+  userid   String @map("userid")
+
+  event Event @relation(fields: [eventid], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userid],  references: [id], onDelete: Cascade)
+
+  @@unique([eventid, userid])
+  @@map("EventAttendee")
+}
+
+model EventDiscovery {
+  id        String   @id @default(uuid())
+  province  String
+  category  String?
+  score     Int      @default(0)
+  createdat DateTime @default(now()) @map("createdat")
+
+  @@map("EventDiscovery")
+}
+
+// ─── Classified ───────────────────────────────────────────────────────────────
+
+model Classified {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       Float?
+  currency    String   @default("LIBRE")
+  category    String?
+  condition   String?
+  images      String[]
+  city        String?
+  province    String?
+  userid      String   @map("userid")
+  status      String   @default("ACTIVE")
+  createdat   DateTime @default(now()) @map("createdat")
+  updatedat   DateTime @updatedAt      @map("updatedat")
+
+  user User @relation(fields: [userid], references: [id])
+
+  @@map("Classified")
+}
+
+// ─── PriceEntry ───────────────────────────────────────────────────────────────
+
+model PriceEntry {
+  id        String   @id @default(uuid())
+  item      String
+  price     Float
+  currency  String   @default("LIBRE")
+  unit      String?
+  store     String?
+  city      String?
+  province  String?
+  source    String?
+  createdat DateTime @default(now()) @map("createdat")
+
+  @@map("PriceEntry")
+}
+
+// ─── RadioTrack ───────────────────────────────────────────────────────────────
+
+model RadioTrack {
+  id          String   @id @default(uuid())
+  title       String
+  artist      String?
+  url         String
+  genre       String?
+  province    String?
+  submittedby String?  @map("submittedby")
+  approved    Boolean  @default(false)
+  plays       Int      @default(0)
+  createdat   DateTime @default(now()) @map("createdat")
+
+  @@map("RadioTrack")
+}
+
+// ─── BusinessPromotion ────────────────────────────────────────────────────────
+
+model BusinessPromotion {
+  id          String   @id @default(uuid())
+  listingid   String   @map("listingid")
+  type        String
+  title       String
+  description String?
+  imageurl    String?  @map("imageurl")
+  discount    Float?
+  couponcode  String?  @map("couponcode")
+  startdate   DateTime @map("startdate")
+  enddate     DateTime @map("enddate")
+  active      Boolean  @default(true)
+  views       Int      @default(0)
+  clicks      Int      @default(0)
+  createdat   DateTime @default(now()) @map("createdat")
+
+  listing Listing @relation(fields: [listingid], references: [id], onDelete: Cascade)
+
+  @@map("BusinessPromotion")
+}
+
+// ─── Libre Wallet ─────────────────────────────────────────────────────────────
+
+model LibreWallet {
+  id             String   @id @default(uuid())
+  userid         String   @unique @map("userid")
+  balance        BigInt   @default(0)
+  lifetimeearned BigInt   @default(0) @map("lifetimeearned")
+  lifetimespent  BigInt   @default(0) @map("lifetimespent")
+  createdat      DateTime @default(now()) @map("createdat")
+  updatedat      DateTime @updatedAt      @map("updatedat")
+
+  user         User              @relation(fields: [userid], references: [id], onDelete: Cascade)
+  transactions LibreTransaction[]
+
+  @@map("LibreWallet")
+}
+
+model LibreTransaction {
+  id            String       @id @default(uuid())
+  walletid      String       @map("walletid")
+  amount        BigInt
+  type          LibreTxType
+  description   String?
+  fromwalletid  String?      @map("fromwalletid")
+  towalletid    String?      @map("towalletid")
+  referenceid   String?      @map("referenceid")
+  referencetype String?      @map("referencetype")
+  balanceafter  BigInt       @map("balanceafter")
+  createdat     DateTime     @default(now()) @map("createdat")
+
+  wallet LibreWallet @relation(fields: [walletid], references: [id], onDelete: Cascade)
+
+  @@map("LibreTransaction")
+}
+
+// ─── Solidarity ───────────────────────────────────────────────────────────────
+
+model SolidarityGift {
+  id              String           @id @default(uuid())
+  fromname        String?          @map("fromname")
+  fromcountry     String?          @map("fromcountry")
+  fromemail       String?          @map("fromemail")
+  targettype      SolidarityTarget @map("targettype")
+  touserid        String?          @map("touserid")
+  toprovince      String?          @map("toprovince")
+  libreamount     BigInt           @map("libreamount")
+  usdamount       Float            @map("usdamount")
+  message         String?
+  anonymous       Boolean          @default(false)
+  status          SolidarityStatus @default(PENDING)
+  stripepaymentid String?          @unique @map("stripepaymentid")
+  airwallexpayid  String?          @unique @map("airwallexpayid")
+  distributedat   DateTime?        @map("distributedat")
+  createdat       DateTime         @default(now()) @map("createdat")
+
+  @@map("SolidarityGift")
+}
+
+model EmergencyPool {
+  id        String  @id @default("singleton")
+  balance   BigInt  @default(0)
+  totalin   BigInt  @default(0) @map("totalin")
+  totalout  BigInt  @default(0) @map("totalout")
+
+  @@map("EmergencyPool")
+}
+
+// ─── Ads ──────────────────────────────────────────────────────────────────────
+
+model Ad {
+  id             String    @id @default(uuid())
+  title          String
+  description    String?
+  imageurl       String?   @map("imageurl")
+  targeturl      String?   @map("targeturl")
+  advertiser     String?
+  listingid      String?   @map("listingid")
+  salesrepid     String?   @map("salesrepid")
+  tier           AdTier    @default(BANNER)
+  province       String?
+  city           String?
+  provinces      String[]
+  category       String?
+  targetkeywords String[]  @map("targetkeywords")
+  budget         Float     @default(0)
+  spent          Float     @default(0)
+  impressions    Int       @default(0)
+  clicks         Int       @default(0)
+  ctr            Float     @default(0)
+  startdate      DateTime  @map("startdate")
+  enddate        DateTime  @map("enddate")
+  active         Boolean   @default(true)
+  approved       Boolean   @default(false)
+  userid         String?   @map("userid")
+  createdat      DateTime  @default(now()) @map("createdat")
+
+  listing    Listing?       @relation(fields: [listingid],  references: [id])
+  salesRep   SalesRep?      @relation(fields: [salesrepid], references: [id])
+  user       User?          @relation(fields: [userid],     references: [id])
+  impressionRecords AdImpression[]
+  commissions Commission[]
+
+  @@map("Ad")
+}
+
+model AdImpression {
+  id        String   @id @default(uuid())
+  adid      String   @map("adid")
+  userid    String?  @map("userid")
+  sessionid String?  @map("sessionid")
+  page      String?
+  shownat   DateTime @default(now()) @map("shownat")
+
+  ad Ad @relation(fields: [adid], references: [id], onDelete: Cascade)
+
+  @@map("AdImpression")
+}
+
+// ─── ProSubscription ──────────────────────────────────────────────────────────
+
+model ProSubscription {
+  id          String    @id @default(uuid())
+  listingid   String    @unique @map("listingid")
+  plan        String    @default("MONTHLY")
+  price       Float     @default(9.99)
+  ambassadorid String?  @map("ambassadorid")
+  kickback    Float     @default(0)
+  active      Boolean   @default(true)
+  startdate   DateTime  @default(now()) @map("startdate")
+  enddate     DateTime  @map("enddate")
+  stickercode String?   @unique @map("stickercode")
+  createdat   DateTime  @default(now()) @map("createdat")
+
+  listing    Listing     @relation(fields: [listingid],   references: [id])
+  ambassador Ambassador? @relation(fields: [ambassadorid], references: [id])
+
+  @@map("ProSubscription")
+}
+
+// ─── Commission & Payout ──────────────────────────────────────────────────────
+
+model Commission {
+  id         String   @id @default(uuid())
+  salesrepid String   @map("salesrepid")
+  adid       String   @map("adid")
+  amount     Float
+  rate       Float    @default(0.2)
+  paid       Boolean  @default(false)
+  paidat     DateTime? @map("paidat")
+  createdat  DateTime @default(now()) @map("createdat")
+
+  salesRep SalesRep @relation(fields: [salesrepid], references: [id])
+  ad       Ad       @relation(fields: [adid],       references: [id])
+
+  @@map("Commission")
+}
+
+model AmbassadorPayout {
+  id          String    @id @default(uuid())
+  ambassadorid String   @map("ambassadorid")
+  amount      Float
+  method      String?
+  reference   String?
+  paid        Boolean   @default(false)
+  paidat      DateTime? @map("paidat")
+  createdat   DateTime  @default(now()) @map("createdat")
+
+  ambassador Ambassador @relation(fields: [ambassadorid], references: [id])
+
+  @@map("AmbassadorPayout")
+}
+
+// ─── Social ───────────────────────────────────────────────────────────────────
+
+model Follow {
+  id                 String   @id @default(uuid())
+  followerid         String   @map("followerid")
+  followinguserid    String?  @map("followinguserid")
+  followinglistingid String?  @map("followinglistingid")
+  createdat          DateTime @default(now()) @map("createdat")
+
+  follower User @relation("UserFollows", fields: [followerid], references: [id], onDelete: Cascade)
+
+  @@unique([followerid, followinguserid])
+  @@map("Follow")
+}
+
+model DirectMessage {
+  id          String   @id @default(uuid())
+  channelid   String   @map("channelid")
+  channeltype String   @default("dm") @map("channeltype")
+  senderid    String   @map("senderid")
+  sendername  String?  @map("sendername")
+  senderrole  String?  @map("senderrole")
+  content     String
+  messagetype String   @default("text") @map("messagetype")
+  metadata    Json?
+  readby      String[] @map("readby")
+  createdat   DateTime @default(now()) @map("createdat")
+
+  sender User @relation(fields: [senderid], references: [id], onDelete: Cascade)
+
+  @@map("DirectMessage")
+}
+
+model ChatGroup {
+  id        String   @id @default(uuid())
+  name      String
+  creatorid String?  @map("creatorid")
+  memberids String[] @map("memberids")
+  channelid String?  @map("channelid")
+  createdat DateTime @default(now()) @map("createdat")
+  updatedat DateTime @updatedAt      @map("updatedat")
+
+  @@map("ChatGroup")
+}
+
+// ─── Ride Share ───────────────────────────────────────────────────────────────
+
+model DriverProfile {
+  id          String   @id @default(uuid())
+  userid      String   @unique @map("userid")
+  vehicletype String?  @map("vehicletype")
+  services    String[]
+  platenumber String?  @map("platenumber")
+  licenseno   String?  @map("licenseno")
+  available   Boolean  @default(true)
+  rating      Float    @default(0)
+  totalrides  Int      @default(0) @map("totalrides")
+  verified    Boolean  @default(false)
+  city        String?
+  province    String?
+  bio         String?
+  photourl    String?  @map("photourl")
+  createdat   DateTime @default(now()) @map("createdat")
+
+  user    User          @relation(fields: [userid], references: [id])
+  rides   RideRequest[]
+
+  @@map("DriverProfile")
+}
+
+model RideRequest {
+  id             String   @id @default(uuid())
+  type           String   @default("PASSENGER")
+  userid         String   @map("userid")
+  driverid       String?  @map("driverid")
+  status         String   @default("PENDING")
+  pickupaddress  String?  @map("pickupaddress")
+  dropoffaddress String?  @map("dropoffaddress")
+  pickuplat      Float?   @map("pickuplat")
+  pickuplng      Float?   @map("pickuplng")
+  dropofflat     Float?   @map("dropofflat")
+  dropofflng     Float?   @map("dropofflng")
+  notes          String?
+  packagedesc    String?  @map("packagedesc")
+  weight         Float?
+  distance       Float?
+  estimatedprice Float?   @map("estimatedprice")
+  finalprice     Float?   @map("finalprice")
+  currency       String   @default("LIBRE")
+  province       String?
+  city           String?
+  scheduledat    DateTime? @map("scheduledat")
+  completedat    DateTime? @map("completedat")
+  createdat      DateTime @default(now()) @map("createdat")
+  updatedat      DateTime @updatedAt      @map("updatedat")
+
+  user   User           @relation(fields: [userid],   references: [id])
+  driver DriverProfile? @relation(fields: [driverid], references: [id])
+
+  @@map("RideRequest")
+}
+
+// ─── Market ───────────────────────────────────────────────────────────────────
+
+model MarketProduct {
+  id          String   @id @default(uuid())
+  listingid   String?  @map("listingid")
+  name        String
+  description String?
+  imageurl    String?  @map("imageurl")
+  price       BigInt
+  currency    String   @default("LIBRE")
+  instock     Boolean  @default(true) @map("instock")
+  contacturl  String?  @map("contacturl")
+  active      Boolean  @default(true)
+  createdat   DateTime @default(now()) @map("createdat")
+  updatedat   DateTime @updatedAt      @map("updatedat")
+
+  listing Listing? @relation(fields: [listingid], references: [id])
+
+  @@map("MarketProduct")
+}
+
+// ─── MicroLoan ────────────────────────────────────────────────────────────────
+
+model MicroLoan {
+  id             String    @id @default(uuid())
+  userid         String    @map("userid")
+  listingid      String?   @map("listingid")
+  amount         BigInt
+  purpose        String?
+  status         String    @default("REQUESTED")
+  approvedamount BigInt?   @map("approvedamount")
+  disbursedat    DateTime? @map("disbursedat")
+  repaidat       DateTime? @map("repaidat")
+  repaymentmethod String?  @map("repaymentmethod")
+  duedate        DateTime? @map("duedate")
+  interestrate   Float     @default(0) @map("interestrate")
+  notes          String?
+  createdat      DateTime  @default(now()) @map("createdat")
+
+  user User @relation(fields: [userid], references: [id])
+
+  @@map("MicroLoan")
+}
+
+// ─── Cuba Certification & Award ───────────────────────────────────────────────
+
+model CubaCertification {
+  id        String    @id @default(uuid())
+  listingid String    @unique @map("listingid")
+  name      String
+  issuer    String?
+  issuedat  DateTime? @map("issuedat")
+  expiresat DateTime? @map("expiresat")
+  docurl    String?   @map("docurl")
+  createdat DateTime  @default(now()) @map("createdat")
+
+  listing Listing @relation(fields: [listingid], references: [id], onDelete: Cascade)
+
+  @@map("CubaCertification")
+}
+
+model CubaAward {
+  id        String   @id @default(uuid())
+  listingid String   @map("listingid")
+  title     String
+  year      Int?
+  category  String?
+  imageurl  String?  @map("imageurl")
+  rank      Int      @default(1)
+  createdat DateTime @default(now()) @map("createdat")
+
+  listing Listing @relation(fields: [listingid], references: [id], onDelete: Cascade)
+
+  @@map("CubaAward")
+}
+
+// ─── Translation ──────────────────────────────────────────────────────────────
+
+model TranslationSuggestion {
+  id              String   @id @default(uuid())
+  userid          String   @map("userid")
+  sourcetext      String   @map("sourcetext")
+  translationtext String   @map("translationtext")
+  language        String   @default("en")
+  context         String?
+  approved        Boolean  @default(false)
+  votecount       Int      @default(0) @map("votecount")
+  createdat       DateTime @default(now()) @map("createdat")
+
+  user  User             @relation(fields: [userid], references: [id])
+  votes TranslationVote[]
+
+  @@map("TranslationSuggestion")
+}
+
+model TranslationVote {
+  id           String   @id @default(uuid())
+  userid       String   @map("userid")
+  suggestionid String   @map("suggestionid")
+  createdat    DateTime @default(now()) @map("createdat")
+
+  user       User                  @relation(fields: [userid],       references: [id])
+  suggestion TranslationSuggestion @relation(fields: [suggestionid], references: [id], onDelete: Cascade)
+
+  @@unique([userid, suggestionid])
+  @@map("TranslationVote")
+}
+
+// ─── Analytics ────────────────────────────────────────────────────────────────
+
+model UserInterest {
+  id          String   @id @default(uuid())
+  userid      String?  @map("userid")
+  sessionid   String?  @map("sessionid")
+  province    String?
+  city        String?
+  categories  String[] @map("categories")
+  keywords    String[] @map("keywords")
+  usetype     String?  @map("usetype")
+  surveydone  Boolean  @default(false) @map("surveydone")
+  updatedat   DateTime @updatedAt      @map("updatedat")
+  createdat   DateTime @default(now()) @map("createdat")
+
+  @@map("UserInterest")
+}
+
+model UserEvent {
+  id        String   @id @default(uuid())
+  userid    String?  @map("userid")
+  sessionid String?  @map("sessionid")
+  eventtype String   @map("eventtype")
+  path      String?
+  target    String?
+  value     String?
+  metadata  Json?
+  province  String?
+  device    String?
+  createdat DateTime @default(now()) @map("createdat")
+
+  @@map("UserEvent")
+}
+
+// ─── SalesFeedback ────────────────────────────────────────────────────────────
+
+model SalesFeedback {
+  id         String   @id @default(uuid())
+  salesrepid String   @map("salesrepid")
+  listingid  String   @map("listingid")
+  rating     Int?
+  comment    String?
+  createdat  DateTime @default(now()) @map("createdat")
+
+  salesRep SalesRep @relation(fields: [salesrepid], references: [id])
+  listing  Listing  @relation(fields: [listingid],  references: [id])
+
+  @@map("SalesFeedback")
+}
