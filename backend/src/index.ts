@@ -40,6 +40,7 @@ import geoRouter           from './routes/geo';
 import salesrepsRouter     from './routes/salesreps';
 import promotionsRouter    from './routes/promotions';
 import feedbackRouter      from './routes/feedback';
+import cronRouter          from './routes/cron';
 
 const app = express();
 
@@ -113,6 +114,7 @@ app.use('/api/geo',           geoRouter);
 app.use('/api/salesreps',     salesrepsRouter);
 app.use('/api/promotions',    promotionsRouter);
 app.use('/api/feedback',      feedbackRouter);
+app.use('/api/cron',          cronRouter);
 
 // ── Error handler ─────────────────────────────────────────────────────────────
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

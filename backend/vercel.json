@@ -4,5 +4,16 @@
   "routes": [{ "src": "/(.*)", "dest": "src/index.ts" }],
   "env": {
     "NODE_ENV": "production"
+  },
+  "crons": [
+    {
+      "path":     "/api/cron/scrape-osm",
+      "schedule": "0 0,6,12,18 * * *"
+    }
+  ],
+  "functions": {
+    "src/index.ts": {
+      "maxDuration": 300
+    }
   }
 }
