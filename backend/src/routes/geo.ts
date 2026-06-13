@@ -1,4 +1,3 @@
-import { qs, qsr, qsn } from '../utils/query';
 /**
  * geo.ts — Cuba geocoding routes for Cuba Libre
  * Returns all 15 provinces with coordinates, Nominatim search restricted
@@ -6,6 +5,7 @@ import { qs, qsr, qsn } from '../utils/query';
  */
 
 import { Router, Request, Response } from 'express';
+import prisma from '../db';
 
 const router = Router();
 
@@ -109,6 +109,22 @@ router.get('/reverse', async (req: Request, res: Response) => {
       city:        result.address?.city ?? result.address?.town ?? result.address?.village ?? null,
       country:     result.address?.country ?? 'Cuba',
     });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── GET /geo/province-stats — public listing counts per province ─────────────
+
+router.get('/province-stats', async (_req: Request, res: Response) => {
+  try {
+    const counts = await prisma.listing.groupBy({
+      by:      ['province'],
+      where:   { active: true },
+      _count:  { id: true },
+      orderBy: { _count: { id: 'desc' } },
+    });
+    res.json(counts);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
