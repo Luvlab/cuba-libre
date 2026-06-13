@@ -1,30 +1,55 @@
-import { qs, qsr, qsn } from '../utils/query';
 /**
  * radio.ts — Cuban radio & music routes for Cuba Libre
- * Streams from RadioBrowser (Cuban stations), Jamendo (CC Latin/Cuban music),
- * Internet Archive (royalty-free Cuban music), and community-submitted tracks.
+ *
+ * Layers (in priority order):
+ *  1. Hardcoded known Cuban stations — always available as fallback
+ *  2. RadioBrowser API — crowdsourced CU stations, filtered by genre
+ *  3. Jamendo Creative Commons — Latin / Cuban tags
+ *  4. Internet Archive — royalty-free Cuban music (oldest to newest)
+ *  5. Community-submitted tracks — curated by the platform
  */
 
 import { Router, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../db';
 import { requireAuth, optionalAuth, AuthRequest } from '../middleware/auth';
+import { qs, qsr, qsn } from '../utils/query';
 
 const router = Router();
 
 // ─── Cuban music genres ───────────────────────────────────────────────────────
 
 const GENRES = [
-  { id: 'salsa',       label: 'Salsa',        emoji: '💃' },
-  { id: 'son',         label: 'Son Cubano',   emoji: '🎸' },
-  { id: 'timba',       label: 'Timba',        emoji: '🥁' },
-  { id: 'bolero',      label: 'Bolero',       emoji: '🌹' },
-  { id: 'reggaeton',   label: 'Reggaeton',    emoji: '🎧' },
-  { id: 'guaguanco',   label: 'Guaguancó',    emoji: '🎺' },
-  { id: 'rumba',       label: 'Rumba',        emoji: '🪘' },
-  { id: 'nueva_trova', label: 'Nueva Trova',  emoji: '🎵' },
-  { id: 'jazz',        label: 'Cuban Jazz',   emoji: '🎷' },
-  { id: 'trova',       label: 'Trova',        emoji: '🎤' },
+  { id: 'salsa',        label: 'Salsa',          emoji: '💃', jamendoTag: 'salsa' },
+  { id: 'son',          label: 'Son Cubano',      emoji: '🎸', jamendoTag: 'son cubano' },
+  { id: 'timba',        label: 'Timba',           emoji: '🥁', jamendoTag: 'timba' },
+  { id: 'bolero',       label: 'Bolero',          emoji: '🌹', jamendoTag: 'bolero' },
+  { id: 'reggaeton',    label: 'Reggaeton',       emoji: '🎧', jamendoTag: 'reggaeton' },
+  { id: 'guaguanco',    label: 'Guaguancó',       emoji: '🎺', jamendoTag: 'guaguanco' },
+  { id: 'rumba',        label: 'Rumba',           emoji: '🪘', jamendoTag: 'rumba' },
+  { id: 'nueva_trova',  label: 'Nueva Trova',     emoji: '🎵', jamendoTag: 'nueva trova' },
+  { id: 'jazz',         label: 'Cuban Jazz',      emoji: '🎷', jamendoTag: 'cuban jazz' },
+  { id: 'trova',        label: 'Trova',           emoji: '🎤', jamendoTag: 'trova' },
+  { id: 'danzon',       label: 'Danzón',          emoji: '🎻', jamendoTag: 'danzon' },
+  { id: 'mambo',        label: 'Mambo',           emoji: '🎹', jamendoTag: 'mambo' },
+  { id: 'cha_cha_cha',  label: 'Cha-Cha-Chá',    emoji: '👟', jamendoTag: 'cha cha cha' },
+  { id: 'latin_jazz',   label: 'Latin Jazz',      emoji: '🎺', jamendoTag: 'latin jazz' },
+  { id: 'afrocubano',   label: 'Afrocubano',      emoji: '🥁', jamendoTag: 'afro-cuban' },
+];
+
+// ─── Hardcoded known Cuban radio stations (always available) ──────────────────
+
+const CUBAN_STATIONS_HARDCODED = [
+  { name: 'Radio Rebelde',       stationuuid: 'hardcoded-rebelde',  url_resolved: 'https://radiorebelde.cu/radio/rebelde-stream.mp3',        favicon: '', country: 'Cuba', language: 'Spanish', tags: 'news,culture,cuba', votes: 9999, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio Havana Cuba',   stationuuid: 'hardcoded-rhc',      url_resolved: 'https://radiohc.cu/radio/radiohc-stream.mp3',             favicon: '', country: 'Cuba', language: 'Spanish', tags: 'news,cuba,international', votes: 9998, codec: 'MP3', bitrate: 128 },
+  { name: 'CMHW Radio Victoria', stationuuid: 'hardcoded-cmhw',     url_resolved: 'https://www.cmhwradio.cu/radio/cmhw-stream.mp3',          favicon: '', country: 'Cuba', language: 'Spanish', tags: 'music,villa clara,cuba', votes: 9997, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio Progreso',      stationuuid: 'hardcoded-progreso',  url_resolved: 'https://www.radioprogreso.cu/radio/progreso-stream.mp3',  favicon: '', country: 'Cuba', language: 'Spanish', tags: 'music,salsa,cuba', votes: 9996, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio Taíno',         stationuuid: 'hardcoded-taino',     url_resolved: 'https://www.radioreloj.cu/radio/taino-stream.mp3',        favicon: '', country: 'Cuba', language: 'Spanish', tags: 'tourism,cuba,music', votes: 9995, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio Reloj',         stationuuid: 'hardcoded-reloj',     url_resolved: 'https://www.radioreloj.cu/radio/reloj-stream.mp3',        favicon: '', country: 'Cuba', language: 'Spanish', tags: 'news,cuba', votes: 9994, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio COCO',          stationuuid: 'hardcoded-coco',      url_resolved: 'https://www.radiococo.icrt.cu/radio/coco-stream.mp3',     favicon: '', country: 'Cuba', language: 'Spanish', tags: 'pop,youth,cuba', votes: 9993, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio Musical Nacional', stationuuid: 'hardcoded-musical', url_resolved: 'https://www.rna.cu/radio/musical-stream.mp3',           favicon: '', country: 'Cuba', language: 'Spanish', tags: 'classical,music,cuba', votes: 9992, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio Enciclopedia',  stationuuid: 'hardcoded-enciclo',   url_resolved: 'https://www.rna.cu/radio/enciclopedia-stream.mp3',        favicon: '', country: 'Cuba', language: 'Spanish', tags: 'instrumental,cuba', votes: 9991, codec: 'MP3', bitrate: 128 },
+  { name: 'Radio CMKX Santiago', stationuuid: 'hardcoded-cmkx',      url_resolved: 'https://www.radiorebelde.cu/radio/santiago-stream.mp3',   favicon: '', country: 'Cuba', language: 'Spanish', tags: 'santiago,cuba', votes: 9990, codec: 'MP3', bitrate: 128 },
 ];
 
 // ─── GET /radio/genres ────────────────────────────────────────────────────────
@@ -33,53 +58,72 @@ router.get('/genres', (_req, res) => {
   res.json(GENRES);
 });
 
-// ─── GET /radio/stations — RadioBrowser: Cuban stations ──────────────────────
+// ─── GET /radio/stations — Cuban stations (hardcoded + RadioBrowser) ─────────
 
 router.get('/stations', async (req, res) => {
   try {
-    const { genre, limit = '30' } = req.query as Record<string, string>;
-    const genreQuery = genre ?? 'salsa,timba,son,cuba';
+    const genre  = qs(req.query.genre) ?? 'salsa,timba,son,cuba';
+    const limit  = qsn(req.query.limit, 30);
 
-    const params = new URLSearchParams({
-      countrycode: 'CU',
-      tag:         genreQuery,
-      limit:       limit,
-      order:       'votes',
-      reverse:     'true',
-      hidebroken:  'true',
-    });
+    // Always try RadioBrowser first
+    let liveStations: unknown[] = [];
+    try {
+      const params = new URLSearchParams({
+        countrycode: 'CU',
+        tag:         genre,
+        limit:       String(Math.max(10, limit - CUBAN_STATIONS_HARDCODED.length)),
+        order:       'votes',
+        reverse:     'true',
+        hidebroken:  'true',
+      });
+      const resp = await fetch(`https://de1.api.radio-browser.info/json/stations/search?${params}`, {
+        headers: { 'User-Agent': 'CubaLibre/1.0 (+https://cuba.red)' },
+        signal:  AbortSignal.timeout(6000),
+      });
+      if (resp.ok) liveStations = await resp.json() as unknown[];
+    } catch {
+      // RadioBrowser down — use hardcoded only
+    }
 
-    const resp = await fetch(`https://de1.api.radio-browser.info/json/stations/search?${params}`, {
-      headers: { 'User-Agent': 'CubaLibre/1.0 (https://cuba.libre)' },
-    });
+    // Merge: hardcoded first, then live (deduped by name)
+    const liveNames = new Set((liveStations as any[]).map((s: any) => s.name?.toLowerCase()));
+    const merged = [
+      ...CUBAN_STATIONS_HARDCODED.filter(s => !liveNames.has(s.name.toLowerCase())),
+      ...liveStations,
+    ].slice(0, limit);
 
-    if (!resp.ok) return res.status(502).json({ error: 'Radio browser unavailable' });
-    const stations = await resp.json();
-    res.json(stations);
+    res.json(merged);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ─── GET /radio/stations/all-cuba — All Cuban stations without genre filter ──
+// ─── GET /radio/stations/all-cuba — All Cuban stations (hardcoded fallback) ──
 
 router.get('/stations/all-cuba', async (req, res) => {
   try {
-    const { limit = '50' } = req.query as Record<string, string>;
-    const params = new URLSearchParams({
-      countrycode: 'CU',
-      limit,
-      order:       'clickcount',
-      reverse:     'true',
-      hidebroken:  'true',
-    });
+    const limit  = qsn(req.query.limit, 50);
+    let liveStations: unknown[] = [];
 
-    const resp = await fetch(`https://de1.api.radio-browser.info/json/stations/search?${params}`, {
-      headers: { 'User-Agent': 'CubaLibre/1.0' },
-    });
+    try {
+      const params = new URLSearchParams({
+        countrycode: 'CU',
+        limit:       String(limit),
+        order:       'clickcount',
+        reverse:     'true',
+        hidebroken:  'true',
+      });
+      const resp = await fetch(`https://de1.api.radio-browser.info/json/stations/search?${params}`, {
+        headers: { 'User-Agent': 'CubaLibre/1.0' },
+        signal:  AbortSignal.timeout(6000),
+      });
+      if (resp.ok) liveStations = await resp.json() as unknown[];
+    } catch {
+      // Fall through to hardcoded
+    }
 
-    if (!resp.ok) return res.status(502).json({ error: 'Radio browser unavailable' });
-    res.json(await resp.json());
+    if (liveStations.length > 0) return res.json(liveStations);
+    res.json(CUBAN_STATIONS_HARDCODED);   // always-available fallback
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
